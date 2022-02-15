@@ -70,6 +70,21 @@ namespace ContainelDll
             _Timer = new System.Threading.Timer(AsyncConect2server, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(Intervals));
         }
 
+        ~Container()
+        {
+            if(Client != null)
+            {
+                _Timer.Change(-1, -1);//停止定时器
+                Client.Disconnect(true);
+                Client.Close();
+                Client.Dispose();
+
+                Client = null;
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }            
+        }
+
         /// <summary>
         /// 异步链接服务器
         /// </summary>
